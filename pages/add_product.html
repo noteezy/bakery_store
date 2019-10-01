@@ -7,7 +7,7 @@
      <!-- Bootstrap CSS -->
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
     <link href="https://fonts.googleapis.com/css?family=Montserrat:400,700" rel="stylesheet" type="text/css">
-    <link href="./css/style_main.css" rel="stylesheet" type="text/css">
+    <link href="../css/style_main.css" rel="stylesheet" type="text/css">
 </head>
 
 <body>
@@ -16,17 +16,25 @@
     <div class="container">
   <nav>
     <a class="logo" href="index.html">
-      <img src="./photos/logo4.png" alt="logo"></a>
+      <img src="../photos/logo4.png" alt="logo"></a>
     <ul>
-      <li><a href="pages/about.html">About</a></li>
-      <li><a href="">Products</a></li>
+      <li><a href="./about.html">About</a></li>
+      <li><a href="./products.html">Products</a></li>
       <li><a href="">Sign in</a></li>
     </ul>
   </nav>
   </div>
 </header>
 
-
+<div class="container add-product">
+  <form action="" method="post">
+    <div class="container">
+      <input type="text" placeholder="Enter Title" name="uname" required>
+      <input type="text" placeholder="Enter Price" name="psw" required>
+      <button type="submit">Add product</button>
+    </div>
+  </form>
+</div>
 
   <script src="https://code.jquery.com/jquery-3.3.1.min.js" ></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>

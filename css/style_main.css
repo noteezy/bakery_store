@@ -35,3 +35,316 @@ header nav ul li a:hover{
   text-decoration-color: rgb(255, 252, 48);
   color: black;
 }
+/*ABOUT PAGE*/
+div.container.about {
+  margin-top: 114px;
+  text-align: center;
+}
+.about img{
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+  width: 500px;
+}
+.about p {
+  margin-top: 20px;
+}
+.about span{
+  color: rgb(255, 252, 48);
+}
+.about a{
+  color: black;
+  text-decoration: underline;
+  text-decoration-color: rgb(255, 252, 48);
+}
+/*PRODUCTS PAGE*/
+div.container.products {
+  margin-top: 140px;
+}
+.product-single div{
+  border-top: 1px solid rgb(255, 252, 48);
+  border-bottom: 1px solid rgb(255, 252, 48);
+  margin-bottom: 15px;
+}
+.product-single-img img{
+  width: 150px;
+  border-radius: 100px;
+  border: 2px dotted;
+}
+.product-single-text p{
+  text-align: center;
+  font-size: 30px;
+  padding-top: 20px;
+  margin-bottom: 5px;
+  text-shadow: 2px 2px 2px rgb(255, 252, 48);
+}
+.product-single-buy button{
+    margin-top: 50px;
+    background-color: #97DB00;
+    color: black;
+    font-size: 17px;
+    width: 125px;
+    height: 45px;
+    border: 0;
+    border-radius: 20px;
+}
+.product-single-buy button:hover{
+  box-shadow: 2px 2px 2px black;
+}
+
+.product-single-delete button{
+    margin-top: 50px;
+    background-color: #ff9900;
+    color: black;
+    font-size: 17px;
+    width: 125px;
+    height: 45px;
+    border: 0;
+    border-radius: 20px;
+}
+.product-single-delete button:hover{
+  box-shadow: 2px 2px 2px black;
+}
+.product-single-discount button{
+    margin-top: 50px;
+    background-color: #97DB00;
+    color: black;
+    font-size: 17px;
+    width: 125px;
+    height: 45px;
+    border: 0;
+    border-radius: 20px;
+}
+.product-single-discount button:hover{
+  box-shadow: 2px 2px 2px black;
+}
+/*LOGIN PAGE*/
+.login form{
+  width: 400px;
+    margin: 0 auto;
+    margin-top: 75px;
+}
+.login img{
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+  width: 150px;
+}
+.login input{
+  margin-top: 45px;
+    padding: 7px 15px;
+    width: 100%;
+    border: 2px solid  rgb(255, 252, 48);
+    font-size: 20px;
+    color: #595959;
+}
+.login input:focus{
+  outline: none;
+}
+.login button{
+  margin-top: 50px;
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+  background-color: rgb(255, 252, 48);
+  color: black;
+  font-size: 17px;
+  width: 125px;
+  height: 45px;
+  border: 0;
+  border-radius: 20px;
+}
+.login p{
+  text-align: center;
+  margin-top: 25px;
+}
+.login a{
+  color: black;
+}
+.login a:hover{
+  text-decoration-color: rgb(255, 252, 48);
+}
+
+
+/*SIGNUP PAGE*/
+.signup form{
+  width: 400px;
+    margin: 0 auto;
+    margin-top: 75px;
+}
+.signup img{
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+  width: 150px;
+}
+.signup input{
+  margin-top: 45px;
+    padding: 7px 15px;
+    width: 100%;
+    border: 2px solid  rgb(255, 252, 48);
+    font-size: 20px;
+    color: #595959;
+}
+.signup input:focus{
+  outline: none;
+}
+.signup button{
+  margin-top: 50px;
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+  background-color: rgb(255, 252, 48);
+  color: black;
+  font-size: 17px;
+  width: 125px;
+  height: 45px;
+  border: 0;
+  border-radius: 20px;
+}
+.signup p{
+  text-align: center;
+  margin-top: 25px;
+}
+.signup a{
+  color: black;
+}
+.signup a:hover{
+  text-decoration-color: rgb(255, 252, 48);
+}
+/*BASKET PAGE*/
+div.container.basket {
+  margin-top: 140px;
+}
+.basket-single div{
+  border-top: 1px solid rgb(255, 252, 48);
+  border-bottom: 1px solid rgb(255, 252, 48);
+  margin-bottom: 15px;
+}
+.basket-single-img img{
+  width: 150px;
+  border-radius: 100px;
+  border: 2px dotted;
+}
+.basket-single-text p{
+  text-align: center;
+  font-size: 30px;
+  padding-top: 20px;
+  margin-bottom: 5px;
+  text-shadow: 2px 2px 2px rgb(255, 252, 48);
+}
+.basket-single-buy button{
+    margin-top: 50px;
+    background-color: #ff9900;
+    color: black;
+    font-size: 17px;
+    width: 125px;
+    height: 45px;
+    border: 0;
+    border-radius: 20px;
+}
+.basket-single-buy button:hover{
+  box-shadow: 2px 2px 2px black;
+}
+button.basket-order{
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+  margin-top: 50px;
+  margin-bottom: 60px;
+  background-color: rgb(255, 252, 48);
+  color: black;
+  font-size: 25px;
+  width: 160px;
+  height: 60px;
+  border: 0;
+  border-radius: 20px;
+}
+button.basket-order:hover{
+  box-shadow: 2px 2px 2px black;
+  width: 170px;
+  height: 70px;
+  font-size: 30px;
+}
+/*HISTORY PAGE*/
+div.container.history {
+  margin-top: 140px;
+}
+.history-single div{
+  border-top: 1px solid rgb(255, 252, 48);
+  border-bottom: 1px solid rgb(255, 252, 48);
+  margin-bottom: 15px;
+}
+.history-single-img img{
+  width: 150px;
+  border-radius: 100px;
+  border: 2px dotted;
+}
+.history-single-text p{
+  text-align: center;
+  font-size: 30px;
+  padding-top: 20px;
+  margin-bottom: 5px;
+  text-shadow: 2px 2px 2px rgb(255, 252, 48);
+}
+.history-single-buy button{
+    margin-top: 50px;
+    background-color: rgb(255, 252, 48);
+    color: black;
+    font-size: 17px;
+    width: 125px;
+    height: 45px;
+    border: 0;
+    border-radius: 20px;
+    cursor: auto;
+}
+button.history-clear{
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+  margin-top: 50px;
+  margin-bottom: 60px;
+  background-color: rgb(255, 252, 48);
+  color: black;
+  font-size: 25px;
+  width: 160px;
+  height: 60px;
+  border: 0;
+  border-radius: 20px;
+}
+button.history-clear:hover{
+  box-shadow: 2px 2px 2px black;
+  width: 170px;
+  height: 70px;
+  font-size: 30px;
+}
+/*ADD_PRODUCT PAGE*/
+.add-product form{
+  width: 400px;
+  margin: 0 auto;
+  margin-top: 200px;
+}
+.add-product input{
+  margin-top: 45px;
+    padding: 7px 15px;
+    width: 100%;
+    border: 2px solid  rgb(255, 252, 48);
+    font-size: 20px;
+    color: #595959;
+}
+.add-product input:focus{
+  outline: none;
+}
+.add-product button{
+  margin-top: 50px;
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+  background-color: rgb(255, 252, 48);
+  color: black;
+  font-size: 17px;
+  width: 130px;
+  height: 50px;
+  border: 0;
+  border-radius: 20px;
+}
