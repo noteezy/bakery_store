@@ -6,7 +6,7 @@ const bcrypt = require('bcrypt');
 //const bodyParser = require('body-parser');
 
 const saltRounds = 10; // for hashing pass
-const mySecret = "super_secret001";
+const mySecret = "super_secret0001";
 
 const app = express();
 app.use(express.static('static'));
@@ -52,6 +52,35 @@ app.get('/about',(req,res)=>{
 });
 
 /************
+ADD-PRODUCT API
+************/
+app.get('/add-product',(req,res)=>{
+  const token = req.cookies['token'];
+  if (!token) res.redirect("/login");
+  jwt.verify(token, mySecret, function(err, decoded) {
+    if (err) res.redirect("/login");
+    else{
+      if(decoded['role']==1)res.render('add-product', { header: 'header_admin'});
+      else res.redirect("/products");
+    }
+  });
+});
+const createProduct = (request, response) => {
+  const { title, price } = request.body
+  pool.query('INSERT INTO products (title, price) VALUES ($1, $2)', [title, price], (error, results) => {
+    try{
+      if (error) {
+        throw error
+      }
+      response.redirect("/products")
+    }catch (e){
+      console.log(e);
+      response.redirect("/add-product");}
+    });
+
+}
+app.post('/add-product', createProduct)
+/************
 HISTORY API
 ************/
 app.get('/history',(req,res)=>{
@@ -87,6 +116,7 @@ const delete_from_history = (request, response) => {
   });
 }
 app.post('/history-delete', delete_from_history)
+
 /************
 BASKET API
 ************/
@@ -170,6 +200,7 @@ const buy_all_from_basket = (request, response) => {
 }
 app.post('/basket-delete', delete_from_basket)
 app.post('/basket-buy-all', buy_all_from_basket)
+
 /************
 PRODUCTS USER API
 ************/
