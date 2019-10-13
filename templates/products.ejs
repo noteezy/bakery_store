@@ -18,12 +18,34 @@
          <p><%= products[i]['price'] %> $</p>
        </div>
        <div class="col-3 product-single-buy">
-         <button class="product-buy">Buy</button>
+         <button onclick="add_to_basket(<%= products[i]['id'] %>)" class="product-buy">Buy</button>
        </div>
      </div>
   <%  } %>
 
 </div>
+
+  <script>
+  function add_to_basket(id1)
+  {
+      $.ajax({
+      url:"",
+      method:"POST", //First change type to method here
+
+      data:{
+        item_id: id1, // Second add quotes on the value.
+      },
+      success:function(response) {
+       //document.getElementById("disp").innerHTML =response;
+      },
+     error:function(){
+      alert("error");
+     }
+
+    });
+  }
+  </script>
+
 
   <script src="https://code.jquery.com/jquery-3.3.1.min.js" ></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>

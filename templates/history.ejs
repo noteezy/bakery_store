@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<% include head_include %>
+</head>
+
+<body>
+<%- include(header) %>
+
+<div class="container history">
+<% for(var i = products.length-1; i >-1 ; i--) { %>
+  <div class="row history-single">
+    <div class="col-3 history-single-img">
+      <img src="../photos/cake_product.png" alt="">
+    </div>
+    <div class="col-6 history-single-text">
+      <p><%= products[i]['title'] %></p>
+      <p>Price <%= products[i]['price'] %>$ (<%= products[i]['date'] %>)</p>
+    </div>
+    <div class="col-3 history-single-buy">
+      <button class="history-buy">
+        <%if (products[i]['status']==0) { %>
+            Canceled
+        <% } %>
+        <%if (products[i]['status']==1) { %>
+            Bought
+        <% } %>
+      </button>
+    </div>
+  </div>
+  <%  } %>
+  <% if(products.length!=0){ %>
+    <div class="row"><button onclick="delete_from_history()" class="history-clear">Clear All</button></div>
+  <% }else{ %>
+     <h1>FIRST BUY SOME PRODUCTS!</h1>
+  <% } %>
+
+</div>
+
+<script>
+function delete_from_history(o)
+{
+  $(".history-single").remove();
+  $(".history-clear").remove();
+    $.ajax({
+    url:"/history-delete",
+    method:"POST",
+    data:{
+    },
+    success:function(response) {
+    },
+   error:function(){
+    alert("error");
+   }
+  });
+}
+
+</script>
+
+  <script src="https://code.jquery.com/jquery-3.3.1.min.js" ></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
+  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
+  <!-- <script src="./js/main.js"></script> -->
+</body>
+</html>

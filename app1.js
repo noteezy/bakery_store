@@ -51,7 +51,128 @@ app.get('/about',(req,res)=>{
   });
 });
 
+/************
+HISTORY API
+************/
+app.get('/history',(req,res)=>{
+  const token = req.cookies['token'];
+  if (!token) res.redirect("/login");
+  jwt.verify(token, mySecret, function(err, decoded) {
+    if (err) res.redirect("/login");
+    else{
+    pool.query('select * from history join products on history.product_id = products.id  where user_id=$1', [decoded['id']], (error, results) => {
+      console.log(results.rows);
+      if(decoded['role']==0)res.render('history', { header: 'header_user' , products: results.rows});
+      else res.redirect("/products");
+      });
+    }
+  });
+});
+const delete_from_history = (request, response) => {
+  const token = request.cookies['token'];
+  if (!token) response.redirect("/login");
+  jwt.verify(token, mySecret, function(err, decoded) {
+    if (err) response.redirect("/login");
+    else{
+    pool.query('DELETE from history where user_id=$1', [decoded['id']], (error, results) => {
+      try{
+        if (error) {
+          throw "Error while deleting from history."
+        }
+        console.log("Deleted from history.")
+      }catch (e){
+        console.log(e);}
+      });
+    }
+  });
+}
+app.post('/history-delete', delete_from_history)
+/************
+BASKET API
+************/
+app.get('/basket',(req,res)=>{
+  const token = req.cookies['token'];
+  if (!token) res.redirect("/login");
+  jwt.verify(token, mySecret, function(err, decoded) {
+    if (err) res.redirect("/login");
+    else{
+    pool.query('select basket.id, title, price, products.id as product_id from basket join products on basket.product_id = products.id  where user_id=$1', [decoded['id']], (error, results) => {
+      if(decoded['role']==0)res.render('basket', { header: 'header_user' , products: results.rows});
+      else res.redirect("/products");
+      });
+    }
+  });
+});
+const delete_from_basket = (request, response) => {
+  const token = request.cookies['token'];
+  if (!token) response.redirect("/login");
+  jwt.verify(token, mySecret, function(err, decoded) {
+    if (err) response.redirect("/login");
+    else{
+    pool.query('DELETE from basket where id=$1', [request.body['item_id']], (error, results) => {
+      try{
+        if (error) {
+          throw "Error while deleting from basket."
+        }
+        pool.query('INSERT INTO history (user_id, product_id, status, date) VALUES ($1, $2, $3, $4)',
+        [decoded['id'], request.body['product_id'], 0, new Date().toISOString().replace(/T/, ' ').replace(/\..+/, '')], (error, results) => {
+          try{
+            if (error) {
+              throw error
+            }
+            console.log("Added to history: "+request.body['item_id']);
+          }catch (e){
+            console.log(e);}
+          });
+        console.log("Deleted from basket: "+request.body['item_id']);
+      }catch (e){
+        console.log(e);}
+      });
+    }
+  });
+}
+const buy_all_from_basket = (request, response) => {
+  const token = request.cookies['token'];
+  if (!token) response.redirect("/login");
+  jwt.verify(token, mySecret, function(err, decoded) {
+    if (err) response.redirect("/login");
+    else{
+      pool.query('SELECT * FROM basket where user_id=$1',[decoded['id']], (error, results1) => {
+        try{
+          if (error) {
+            throw "Error while selecting all from basket."
+          }
+          for (i = 0; i < results1.rows.length; i++) {
+            pool.query('INSERT INTO history (user_id, product_id, status, date) VALUES ($1, $2, $3, $4)',
+            [decoded['id'], results1.rows[i]['product_id'], 1, new Date().toISOString().replace(/T/, ' ').replace(/\..+/, '')], (error, results) => {
+              try{
+                if (error) {throw error}
+              }catch (e){
+                console.log(e);}});
+          }
 
+        }catch (e){
+          console.log(e);}
+        });
+
+        pool.query('DELETE from basket where user_id=$1', [decoded['id']], (error, results) => {
+          try{
+            if (error) {
+              throw "Error while deleting from basket."
+            }
+            console.log("Deleted from basket all products for user: "+decoded['id']);
+          }catch (e){
+            console.log(e);}
+          });
+
+    }
+  });
+}
+app.post('/basket-delete', delete_from_basket)
+app.post('/basket-buy-all', buy_all_from_basket)
+/************
+PRODUCTS USER API
+************/
 app.get('/products',(req,res)=>{
   const token = req.cookies['token'];
   if (!token) res.redirect("/login");
@@ -65,7 +186,39 @@ app.get('/products',(req,res)=>{
     }
   });
 });
-
+const add_to_basket = (request, response) => {
+  const token = request.cookies['token'];
+  if (!token) response.redirect("/login");
+  jwt.verify(token, mySecret, function(err, decoded) {
+    if (err) response.redirect("/login");
+    else{
+    pool.query('INSERT INTO basket (user_id, product_id) VALUES ($1, $2)', [decoded['id'], request.body['item_id']], (error, results) => {
+      try{
+        if (error) {
+          throw "Error while inserting"
+        }
+        console.log("Added to basket: "+request.body['item_id']);
+      }catch (e){
+        console.log(e);}
+      });
+    }
+  });
+  // const { uname, psw1, psw2 } = request.body
+  // const pass_hash = bcrypt.hash(psw1, saltRounds, function (err,   hash){
+  //   pool.query('INSERT INTO users (email, password, role) VALUES ($1, $2, $3)', [uname, hash, 0], (error, results) => {
+  //     try{
+  //       if (error) {
+  //         throw "Error while inserting"
+  //       }
+  //       response.redirect("/login")
+  //     }catch (e){
+  //       console.log(e);
+  //       response.redirect("/signup");}
+  //     })
+  // });
+  console.log(request.body['item_id']);
+}
+app.post('/products', add_to_basket)
 
 /************
 SIGNUP API
@@ -110,7 +263,7 @@ app.get('/login',(req,res)=>{
     jwt.verify(token, mySecret, function(err, decoded) {
       if (err) res.sendFile(path.join(__dirname+'/static/pages/login.html'));
       else
-      res.redirect('/about')
+      res.redirect('/about');
     });
   }
 });
@@ -158,12 +311,11 @@ app.get('/logout',(req,res)=>{
   res.redirect("/login");
 });
 
-
 /************
 404 API
 ************/
 app.get('*', function(req, res){
-  res.send('what???', 404);
+   res.status(404).send('what???');
 });
 
 

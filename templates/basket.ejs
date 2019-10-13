@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<% include head_include %>
+</head>
+<body>
+<%- include(header) %>
+
+<div class="container basket">
+
+  <% for(var i = 0; i < products.length; i++) { %>
+    <div id="btn_delete_product_<%= products[i]['id'] %>" class="row basket-single">
+      <div class="col-3 basket-single-img">
+        <img src="../photos/cake_product.png" alt="">
+      </div>
+      <div class="col-6 basket-single-text">
+        <p><%= products[i]['title'] %></p>
+        <p>Price <%= products[i]['price'] %>$</p>
+      </div>
+      <div class="col-3 basket-single-buy">
+        <button onclick="delete_from_basket(<%= products[i]['id'] %>, <%= products[i]['product_id'] %>)" class="basket-buy">Cancel</button>
+      </div>
+    </div>
+  <%  } %>
+  <% if(products.length!=0){ %>
+    <div class="row"><button onclick="buy_all_from_basket()" class="basket-order">Buy All</button></div>
+  <% }else{ %>
+     <h1>FIRST CHOOSE SOME PRODUCTS!</h1>
+  <% } %>
+
+</div>
+
+<script>
+function delete_from_basket(order_id, product_id)
+{
+  $("#btn_delete_product_"+order_id).remove();
+    $.ajax({
+    url:"/basket-delete",
+    method:"POST",
+    data:{
+      item_id: order_id,
+      product_id: product_id,
+    },
+    success:function(response) {
+    },
+   error:function(){
+    alert("error");
+   }
+  });
+}
+
+function buy_all_from_basket()
+{
+    $(".basket-single").remove();
+    $(".basket-order").remove();
+    $.ajax({
+    url:"/basket-buy-all",
+    method:"POST",
+    data:{
+    },
+    success:function(response) {
+    },
+   error:function(){
+    alert("error");
+   }
+  });
+}
+
+</script>
+
+  <script src="https://code.jquery.com/jquery-3.3.1.min.js" ></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
+  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
+  <!-- <script src="./js/main.js"></script> -->
+</body>
+</html>
