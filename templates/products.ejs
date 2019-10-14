@@ -23,6 +23,35 @@
      </div>
   <%  } %>
 
+
+<nav>
+  <ul class="pagination">
+    <li class="page-item
+      <%if (parseInt(pageId)==0) { %>
+          disabled
+      <% } %>
+      "><a class="page-link" href="/products/<%= parseInt(pageId)-1 %>">Previous</a></li>
+<% for(var i = 0; i < cnt; i++) { %>
+      <li class = "page-item
+      <%if (parseInt(i)==(pageId)) { %>
+          active
+      <% } %>
+      ">
+        <a class="page-link" href="/products/<%= i %>"><%= i+1 %></a>
+      </li>
+<%  } %>
+  <li class="page-item
+  <%if (parseInt(pageId)==(cnt-1)) { %>
+      disabled
+  <% } %>
+  "><a class="page-link" href="/products/<%= parseInt(pageId)+1 %>">Next</a></li>
+</ul>
+</nav>
+
+
+
+
+
 </div>
 
   <script>

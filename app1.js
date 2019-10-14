@@ -7,7 +7,7 @@ const bcrypt = require('bcrypt');
 
 const saltRounds = 10; // for hashing pass
 const mySecret = "super_secret0001";
-
+const cntProductsOnOnePage = 3;
 const app = express();
 app.use(express.static('static'));
 app.use(express.urlencoded({ extended: true }));
@@ -15,7 +15,6 @@ app.use(cookieParser())
 
 //app.use(bodyParser.json());
 //app.use(bodyParser.urlencoded({extended: true,}));
-
 const Pool = require('pg').Pool
 const pool = new Pool({
   user: 'postgres',
@@ -204,16 +203,36 @@ app.post('/basket-buy-all', buy_all_from_basket)
 /************
 PRODUCTS USER API
 ************/
+app.get('/products/:pageId',(req,res)=>{
+  const token = req.cookies['token'];
+  if (!token) res.redirect("/login");
+  jwt.verify(token, mySecret, function(err, decoded) {
+    if (err) res.redirect("/login");
+    else{
+      pool.query('select count(*) from products', (error, results1) => {
+        pool.query('select * from products offset $1 limit $2', [req.params.pageId*cntProductsOnOnePage, cntProductsOnOnePage], (error, results) => {
+          if(decoded['role']==0)res.render('products', { header: 'header_user' , products: results.rows,
+            cnt: Math.ceil((parseInt(results1.rows[0]['count'])+1)/cntProductsOnOnePage), pageId: req.params.pageId});
+          else res.render('products-admin', { header: 'header_admin' , products: results.rows,
+            cnt: Math.ceil((parseInt(results1.rows[0]['count'])+1)/cntProductsOnOnePage), pageId: req.params.pageId});
+          });
+      });
+    }
+  });
+});
+
+
 app.get('/products',(req,res)=>{
   const token = req.cookies['token'];
   if (!token) res.redirect("/login");
   jwt.verify(token, mySecret, function(err, decoded) {
     if (err) res.redirect("/login");
     else{
-    pool.query('SELECT * FROM products', (error, results) => {
-      if(decoded['role']==0)res.render('products', { header: 'header_user' , products: results.rows});
-      else res.render('products-admin', { header: 'header_admin' , products: results.rows});
-      });
+      res.redirect("/products/0")
+    // pool.query('SELECT * FROM products', (error, results) => {
+    //   if(decoded['role']==0)res.render('products', { header: 'header_user' , products: results.rows});
+    //   else res.render('products-admin', { header: 'header_admin' , products: results.rows});
+    //   });
     }
   });
 });
@@ -249,8 +268,41 @@ const add_to_basket = (request, response) => {
   // });
   console.log(request.body['item_id']);
 }
+const delete_product = (request, response) => {
+  const token = request.cookies['token'];
+  if (!token) response.redirect("/login");
+  jwt.verify(token, mySecret, function(err, decoded) {
+    if (err) response.redirect("/login");
+    else{
+        pool.query('DELETE from history where product_id=$1', [request.body['product_id']], (error, results) => {
+          try{
+            if (error) {
+              throw "Error while deleting from history."
+            }
+          }catch (e){
+            console.log(e);}
+          });
+        pool.query('DELETE from basket where product_id=$1', [request.body['product_id']], (error, results) => {
+          try{
+            if (error) {
+              throw "Error while deleting from basket."
+            }
+          }catch (e){
+            console.log(e);}
+          });
+        pool.query('DELETE from products where id=$1', [request.body['product_id']], (error, results) => {
+          try{
+            if (error) {
+              throw "Error while deleting from basket."
+            }
+          }catch (e){
+            console.log(e);}
+          });
+    }
+  });
+}
 app.post('/products', add_to_basket)
-
+app.post('/product-delete', delete_product)
 /************
 SIGNUP API
 ************/
@@ -314,11 +366,10 @@ const getUser = (request, response) => {
               if (res){
                 var token = jwt.sign({ id: user_id, role: role}, mySecret, { expiresIn: 86400 });// expires in 24 hours
                 response.cookie('token', token);
-                response.redirect("/products");
+                response.redirect("/about");
               } else {
                 response.json({message: 'Passwords do not match :c'});
                 response.end();
-                //response.redirect("/login");
               }
           }catch(e)
           {

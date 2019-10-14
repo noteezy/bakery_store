@@ -349,3 +349,21 @@ button.history-clear:hover{
   border: 0;
   border-radius: 20px;
 }
+/*PAGINATION*/
+.pagination{
+  justify-content: center;
+}
+.page-link{
+  color: black;
+}
+.page-link:hover{
+  color: black;
+}
+.page-link:focus{
+  box-shadow: 0 0 0 0.2rem rgba(255,252,48,.25);
+}
+.page-item.active .page-link{
+  color: black;
+  background-color: rgb(255, 252, 48);
+  border-color: black;
+}
