@@ -3,6 +3,7 @@ const path = require('path');
 const jwt = require('jsonwebtoken');
 const cookieParser = require('cookie-parser')
 const bcrypt = require('bcrypt');
+const nodemailer = require('nodemailer');
 //const bodyParser = require('body-parser');
 
 const saltRounds = 10; // for hashing pass
@@ -28,6 +29,16 @@ app.set('views', __dirname+'/templates');
 app.set('view engine', 'ejs');
 
 
+var transport = nodemailer.createTransport({
+  host: "smtp.mailtrap.io",
+  port: 2525,
+  auth: {
+    user: "572c91c927b655",
+    pass: "c01cbe9b81c120"
+  }
+});
+
+
 app.get('/',(req,res)=>{
   const token = req.cookies['token'];
   if (!token) res.redirect("/login");
@@ -37,7 +48,6 @@ app.get('/',(req,res)=>{
     else res.render('about', { header: 'header_admin' });
   });
 });
-
 app.get('/about',(req,res)=>{
   var token = req.cookies['token'];
   if (!token) res.redirect("/login");
@@ -49,36 +59,6 @@ app.get('/about',(req,res)=>{
     }
   });
 });
-
-/************
-ADD-PRODUCT API
-************/
-app.get('/add-product',(req,res)=>{
-  const token = req.cookies['token'];
-  if (!token) res.redirect("/login");
-  jwt.verify(token, mySecret, function(err, decoded) {
-    if (err) res.redirect("/login");
-    else{
-      if(decoded['role']==1)res.render('add-product', { header: 'header_admin'});
-      else res.redirect("/products");
-    }
-  });
-});
-const createProduct = (request, response) => {
-  const { title, price } = request.body
-  pool.query('INSERT INTO products (title, price) VALUES ($1, $2)', [title, price], (error, results) => {
-    try{
-      if (error) {
-        throw error
-      }
-      response.redirect("/products")
-    }catch (e){
-      console.log(e);
-      response.redirect("/add-product");}
-    });
-
-}
-app.post('/add-product', createProduct)
 /************
 HISTORY API
 ************/
@@ -125,7 +105,7 @@ app.get('/basket',(req,res)=>{
   jwt.verify(token, mySecret, function(err, decoded) {
     if (err) res.redirect("/login");
     else{
-    pool.query('select basket.id, title, price, products.id as product_id from basket join products on basket.product_id = products.id  where user_id=$1', [decoded['id']], (error, results) => {
+    pool.query('select basket.id, title, price, discount, products.id as product_id from basket join products on basket.product_id = products.id  where user_id=$1', [decoded['id']], (error, results) => {
       if(decoded['role']==0)res.render('basket', { header: 'header_user' , products: results.rows});
       else res.redirect("/products");
       });
@@ -209,19 +189,20 @@ app.get('/products/:pageId',(req,res)=>{
   jwt.verify(token, mySecret, function(err, decoded) {
     if (err) res.redirect("/login");
     else{
-      pool.query('select count(*) from products', (error, results1) => {
-        pool.query('select * from products offset $1 limit $2', [req.params.pageId*cntProductsOnOnePage, cntProductsOnOnePage], (error, results) => {
-          if(decoded['role']==0)res.render('products', { header: 'header_user' , products: results.rows,
-            cnt: Math.ceil((parseInt(results1.rows[0]['count'])+1)/cntProductsOnOnePage), pageId: req.params.pageId});
-          else res.render('products-admin', { header: 'header_admin' , products: results.rows,
-            cnt: Math.ceil((parseInt(results1.rows[0]['count'])+1)/cntProductsOnOnePage), pageId: req.params.pageId});
+      if(req.params.pageId<0) res.redirect("/products/0");
+      else{
+          pool.query('select count(*) from products', (error, results1) => {
+            pool.query('select * from products offset $1 limit $2', [req.params.pageId*cntProductsOnOnePage, cntProductsOnOnePage], (error, results) => {
+              if(decoded['role']==0)res.render('products', { header: 'header_user' , products: results.rows,
+                cnt: Math.ceil((parseInt(results1.rows[0]['count'])+1)/cntProductsOnOnePage), pageId: req.params.pageId});
+              else res.render('products-admin', { header: 'header_admin' , products: results.rows,
+                cnt: Math.ceil((parseInt(results1.rows[0]['count'])+1)/cntProductsOnOnePage), pageId: req.params.pageId});
+              });
           });
-      });
+        }
     }
   });
 });
-
-
 app.get('/products',(req,res)=>{
   const token = req.cookies['token'];
   if (!token) res.redirect("/login");
@@ -242,6 +223,7 @@ const add_to_basket = (request, response) => {
   jwt.verify(token, mySecret, function(err, decoded) {
     if (err) response.redirect("/login");
     else{
+      console.log(request.body['item_id']);
     pool.query('INSERT INTO basket (user_id, product_id) VALUES ($1, $2)', [decoded['id'], request.body['item_id']], (error, results) => {
       try{
         if (error) {
@@ -253,20 +235,6 @@ const add_to_basket = (request, response) => {
       });
     }
   });
-  // const { uname, psw1, psw2 } = request.body
-  // const pass_hash = bcrypt.hash(psw1, saltRounds, function (err,   hash){
-  //   pool.query('INSERT INTO users (email, password, role) VALUES ($1, $2, $3)', [uname, hash, 0], (error, results) => {
-  //     try{
-  //       if (error) {
-  //         throw "Error while inserting"
-  //       }
-  //       response.redirect("/login")
-  //     }catch (e){
-  //       console.log(e);
-  //       response.redirect("/signup");}
-  //     })
-  // });
-  console.log(request.body['item_id']);
 }
 const delete_product = (request, response) => {
   const token = request.cookies['token'];
@@ -301,8 +269,97 @@ const delete_product = (request, response) => {
     }
   });
 }
+const add_discount = (request, response) => {
+  const token = request.cookies['token'];
+  if (!token) response.redirect("/login");
+  jwt.verify(token, mySecret, function(err, decoded) {
+    if (err) response.redirect("/login");
+    else{
+    pool.query('update products set discount = $1 where id=$2', [request.body['discount'], request.body['product_id']], (error, results) => {
+      try{
+        if (error) {
+          throw "Error while setting dicount."
+        }
+        console.log("Added discount to: "+request.body['product_id']);
+      }catch (e){
+        console.log(e);}
+      });
+    }
+  });
+}
 app.post('/products', add_to_basket)
 app.post('/product-delete', delete_product)
+app.post('/product-discount', add_discount)
+/************
+ADD-PRODUCT API
+************/
+app.get('/add-product',(req,res)=>{
+  const token = req.cookies['token'];
+  if (!token) res.redirect("/login");
+  jwt.verify(token, mySecret, function(err, decoded) {
+    if (err) res.redirect("/login");
+    else{
+      if(decoded['role']==1)res.render('add-product', { header: 'header_admin'});
+      else res.redirect("/products");
+    }
+  });
+});
+const createProduct = (request, response) => {
+  const { title, price } = request.body
+  pool.query('INSERT INTO products (title, price, discount) VALUES ($1, $2, $3)', [title, price, 0], (error, results) => {
+    try{
+      if (error) {
+        throw error
+      }
+      response.redirect("/products")
+    }catch (e){
+      console.log(e);
+      response.redirect("/add-product");}
+    });
+}
+app.post('/add-product', createProduct)
+
+/************
+EMAIL API
+************/
+app.get('/send-email',(req,res)=>{
+  const token = req.cookies['token'];
+  if (!token) res.redirect("/login");
+  jwt.verify(token, mySecret, function(err, decoded) {
+    if (err) res.redirect("/login");
+    else{
+      if(decoded['role']==1)res.render('send_emails', { header: 'header_admin'});
+      else res.redirect("/products");
+    }
+  });
+});
+const send_emails = (request, response) => {
+  console.log(request.body['message']);
+  pool.query('select email from users where receive_email = true',(error, results) => {
+    try{
+      if (error) {
+        throw error
+      }
+      for (i = 0; i < results.rows.length; i++) {
+        const message = {
+          from: 'admin@bakery.store',
+          to: results.rows[i]['email'],
+          subject: 'Email from Bakery Store!',
+          text: request.body['message']
+        };
+        transport.sendMail(message, function(err, info) {
+            if (err) {
+              console.log(err)
+            } else {
+              console.log(info);
+            }
+        });
+      }
+    }catch (e){
+      console.log(e);}
+    });
+}
+app.post('/send-email', send_emails)
 /************
 SIGNUP API
 ************/
@@ -318,9 +375,9 @@ app.get('/signup',(req,res)=>{
   }
 });
 const createUser = (request, response) => {
-  const { uname, psw1, psw2 } = request.body
+  const { uname, psw1, psw2,  emails} = request.body
   const pass_hash = bcrypt.hash(psw1, saltRounds, function (err,   hash){
-    pool.query('INSERT INTO users (email, password, role) VALUES ($1, $2, $3)', [uname, hash, 0], (error, results) => {
+    pool.query('INSERT INTO users (email, password, role, receive_email) VALUES ($1, $2, $3, $4)', [uname, hash, 0, emails=="on"], (error, results) => {
       try{
         if (error) {
           throw "Error while inserting"

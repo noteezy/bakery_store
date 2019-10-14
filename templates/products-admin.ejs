@@ -13,49 +13,48 @@
        <div class="col-3 product-single-img">
          <img src="../photos/cake_product.png" alt="">
        </div>
-       <div class="col-5 product-single-text">
+       <div class="col-4 product-single-text">
          <p><%= products[i]['title'] %></p>
          <p><%= products[i]['price'] %> $</p>
        </div>
-       <div class="col-2 product-single-discount">
-         <button class="product-add-discount">Add Discount</button>
+       <div class="col-3 product-single-discount">
+         <input type="number" id="discount_<%= products[i]['id']%>" name="discount" min="0" max="100" value="<%= products[i]['discount']%>">
+         <button onclick="add_discount(<%= products[i]['id'] %>)" class="product-add-discount">Add Discount</button>
        </div>
        <div class="col-2 product-single-delete">
-         <button onclick="delete_from_basket(<%= products[i]['id'] %>)" class="product-delete">Delete</button>
+         <button onclick="delete_from_products(<%= products[i]['id'] %>)" class="product-delete">Delete</button>
        </div>
      </div>
   <%  } %>
 
   <nav>
-    <ul class="pagination">
-      <li class="page-item
-        <%if (parseInt(pageId)==0) { %>
+      <ul class="pagination">
+          <li class="page-item
+            <%if (parseInt(pageId)<=0) { %>
+                disabled
+            <% } %>
+            "><a class="page-link" href="/products/<%= parseInt(pageId)-1 %>">Previous</a></li>
+        <% for(var i = 0; i < cnt; i++) { %>
+            <li class = "page-item
+            <%if (parseInt(i)==(pageId)) { %>
+                active
+            <% } %>
+            ">
+              <a class="page-link" href="/products/<%= i %>"><%= i+1 %></a>
+            </li>
+        <%  } %>
+        <li class="page-item
+        <%if (parseInt(pageId)>=(cnt-1)) { %>
             disabled
         <% } %>
-        "><a class="page-link" href="/products/<%= parseInt(pageId)-1 %>">Previous</a></li>
-  <% for(var i = 0; i < cnt; i++) { %>
-        <li class = "page-item
-        <%if (parseInt(i)==(pageId)) { %>
-            active
-        <% } %>
-        ">
-          <a class="page-link" href="/products/<%= i %>"><%= i+1 %></a>
-        </li>
-  <%  } %>
-    <li class="page-item
-    <%if (parseInt(pageId)==(cnt-1)) { %>
-        disabled
-    <% } %>
-    "><a class="page-link" href="/products/<%= parseInt(pageId)+1 %>">Next</a></li>
-  </ul>
+        "><a class="page-link" href="/products/<%= parseInt(pageId)+1 %>">Next</a></li>
+      </ul>
   </nav>
 
 
 </div>
 <script>
-
-
-function delete_from_basket(product_id)
+function delete_from_products(product_id)
 {
   $("#btn_delete_product_"+product_id).remove();
     $.ajax({
@@ -72,6 +71,26 @@ function delete_from_basket(product_id)
   });
 }
 
+function add_discount(product_id)
+{
+  if($('#discount_'+product_id).val()=='') alert("Choose dicount!")
+  else{
+  // $('#discount_'+product_id).val()
+        $.ajax({
+        url:"/product-discount",
+        method:"POST",
+        data:{
+          product_id: product_id,
+          discount: $('#discount_'+product_id).val(),
+        },
+        success:function(response) {
+        },
+       error:function(){
+        alert("error");
+       }
+      });
+    }
+}
 </script>
 
 

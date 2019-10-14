@@ -15,7 +15,8 @@
        </div>
        <div class="col-6 product-single-text">
          <p><%= products[i]['title'] %></p>
-         <p><%= products[i]['price'] %> $</p>
+         <p><%= products[i]['price'] %> $ <%if ((products[i]['discount']!==0))
+            { %> -<%= products[i]['discount'] %>%<% } %></p>
        </div>
        <div class="col-3 product-single-buy">
          <button onclick="add_to_basket(<%= products[i]['id'] %>)" class="product-buy">Buy</button>
@@ -24,43 +25,39 @@
   <%  } %>
 
 
-<nav>
-  <ul class="pagination">
-    <li class="page-item
-      <%if (parseInt(pageId)==0) { %>
+    <nav>
+      <ul class="pagination">
+        <li class="page-item
+          <%if (parseInt(pageId)<=0) { %>
+              disabled
+          <% } %>
+          "><a class="page-link" href="/products/<%= parseInt(pageId)-1 %>">Previous</a></li>
+      <% for(var i = 0; i < cnt; i++) { %>
+          <li class = "page-item
+          <%if (parseInt(i)==(pageId)) { %>
+              active
+          <% } %>
+          ">
+            <a class="page-link" href="/products/<%= i %>"><%= i+1 %></a>
+          </li>
+      <%  } %>
+      <li class="page-item
+      <%if (parseInt(pageId)>=(cnt-1)) { %>
           disabled
       <% } %>
-      "><a class="page-link" href="/products/<%= parseInt(pageId)-1 %>">Previous</a></li>
-<% for(var i = 0; i < cnt; i++) { %>
-      <li class = "page-item
-      <%if (parseInt(i)==(pageId)) { %>
-          active
-      <% } %>
-      ">
-        <a class="page-link" href="/products/<%= i %>"><%= i+1 %></a>
-      </li>
-<%  } %>
-  <li class="page-item
-  <%if (parseInt(pageId)==(cnt-1)) { %>
-      disabled
-  <% } %>
-  "><a class="page-link" href="/products/<%= parseInt(pageId)+1 %>">Next</a></li>
-</ul>
-</nav>
+      "><a class="page-link" href="/products/<%= parseInt(pageId)+1 %>">Next</a></li>
+      </ul>
+    </nav>
+  </div>
 
 
-
-
-
-</div>
 
   <script>
   function add_to_basket(id1)
   {
       $.ajax({
-      url:"",
+      url:"/products",
       method:"POST", //First change type to method here
-
       data:{
         item_id: id1, // Second add quotes on the value.
       },

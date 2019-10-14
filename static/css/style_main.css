@@ -38,7 +38,7 @@ header nav ul li a:hover{
 }
 /*ABOUT PAGE*/
 div.container.about {
-  margin-top: 114px;
+  margin-top: 95px;
   text-align: center;
 }
 .about img{
@@ -119,6 +119,16 @@ div.container.products {
 .product-single-discount button:hover{
   box-shadow: 2px 2px 2px black;
 }
+.product-single-discount input{
+  color: black;
+  font-size: 17px;
+  height: 45px;
+  border-radius: 5px;
+  text-align: center;
+}
+.product-single-discount input:focus{
+  outline-color: rgb(255, 252, 48);
+}
 /*LOGIN PAGE*/
 .login form{
   width: 400px;
@@ -170,8 +180,8 @@ div.container.products {
 /*SIGNUP PAGE*/
 .signup form{
   width: 400px;
-    margin: 0 auto;
-    margin-top: 75px;
+  margin: 0 auto;
+  margin-top: 50px;
 }
 .signup img{
   display: block;
@@ -191,7 +201,7 @@ div.container.products {
   outline: none;
 }
 .signup button{
-  margin-top: 50px;
+  margin-top: 20px;
   display: block;
   margin-left: auto;
   margin-right: auto;
@@ -213,6 +223,15 @@ div.container.products {
 .signup a:hover{
   text-decoration-color: rgb(255, 252, 48);
 }
+.email-agreement{
+  text-align: center;
+}
+.email-agreement input{
+  width: 30px;
+  margin-top: 30px;
+}
+
+
 /*BASKET PAGE*/
 div.container.basket {
   margin-top: 140px;
@@ -349,6 +368,35 @@ button.history-clear:hover{
   border: 0;
   border-radius: 20px;
 }
+
+/*SEND EMAILS PAGE*/
+div.send-email{
+  width: 400px;
+  margin: 0 auto;
+  margin-top: 200px;
+}
+.send-email h2{
+  text-align: center;
+}
+.send-email textarea{
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+}
+.send-email button{
+  margin-top: 50px;
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+  background-color: rgb(255, 252, 48);
+  color: black;
+  font-size: 17px;
+  width: 130px;
+  height: 50px;
+  border: 0;
+  border-radius: 20px;
+}
+
 /*PAGINATION*/
 .pagination{
   justify-content: center;
