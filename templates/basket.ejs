@@ -46,6 +46,8 @@ function delete_from_basket(order_id, product_id)
    error:function(){
     alert("error");
    }
+ }).done(function(result){
+      location.reload();
   });
 }
 

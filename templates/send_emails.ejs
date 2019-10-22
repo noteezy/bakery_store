@@ -22,21 +22,20 @@ function send_emails()
 {
   if($('#email-text').val()=='') alert("Print text!");
   else{
-  $('#email-text').val("Messages were sent!");
-        $.ajax({
-        url:"/send-email",
-        method:"POST",
-        data:{
-          message: $('#email-text').val(),
-        },
-        success:function(response) {
-
-        },
-       error:function(){
-        alert("error");
-       }
-      });
-    }
+  alert("Messages were sent!");
+  $.ajax({
+    url:"/send-email",
+    method:"POST",
+    data:{
+      message: $('#email-text').val(),
+    },
+    success:function(response) {
+    },
+   error:function(){
+    alert("error");
+   }
+  });
+  }
 }
 </script>
 

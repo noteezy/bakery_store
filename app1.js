@@ -33,8 +33,8 @@ var transport = nodemailer.createTransport({
   host: "smtp.mailtrap.io",
   port: 2525,
   auth: {
-    user: "572c91c927b655",
-    pass: "c01cbe9b81c120"
+    user: "username", //changed just in case
+    pass: "pass"
   }
 });
 
@@ -425,8 +425,9 @@ const getUser = (request, response) => {
                 response.cookie('token', token);
                 response.redirect("/about");
               } else {
-                response.json({message: 'Passwords do not match :c'});
-                response.end();
+                response.redirect('/login');
+              //  response.json({message: 'Passwords do not match :c'});
+              //  response.end();
               }
           }catch(e)
           {
@@ -456,7 +457,6 @@ app.get('/logout',(req,res)=>{
 app.get('*', function(req, res){
    res.status(404).send('what???');
 });
-
 
 /************
 START SERVER
